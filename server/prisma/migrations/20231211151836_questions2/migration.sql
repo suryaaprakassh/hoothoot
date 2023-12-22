@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Question` MODIFY `opt3` VARCHAR(191) NULL,
+    MODIFY `opt4` VARCHAR(191) NULL;

@@ -88,11 +88,16 @@ router.post("/login", async (req, res) => {
     process.env.JWT_SECRET!,
     {
       expiresIn: "1d",
-    }
+    },
   );
   return res
     .status(200)
-    .cookie("token", token, { maxAge: 60 * 60 * 12, httpOnly: true })
+    .cookie("token", token, {
+      maxAge: 60 * 60 * 24 * 1000,
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    })
     .json({
       message: "Login Success",
       success: true,
@@ -100,8 +105,9 @@ router.post("/login", async (req, res) => {
 });
 router.post("/verify", async (req, res) => {
   const token = req.cookies["token"];
+  console.log("token======", req.cookies);
   if (!token || token == undefined) {
-    return res.status(403).json({
+    return res.status(403).clearCookie("token").json({
       message: "Invalid Token",
     });
   }

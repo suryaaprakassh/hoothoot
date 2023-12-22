@@ -34,13 +34,15 @@ export type QuestionType = {
   question: string;
   opt1: string;
   opt2: string;
-  opt3: string;
-  opt4: string;
+  opt3?: string;
+  opt4?: string;
   ans: string;
 };
 
+type optionsType = "opt1" | "opt2" | "opt3" | "opt4";
+
 const QuestionElement = (props: Props) => {
-  const options: string[] = [
+  const options: optionsType[] = [
     "opt1",
     "opt2",
     "opt3",
@@ -50,9 +52,7 @@ const QuestionElement = (props: Props) => {
     question: "",
     opt1: "",
     opt2: "",
-    opt3: "",
-    opt4: "",
-    ans: "opt1",
+    ans: "op1",
   });
   const [optionCounter, setOptionCounter] = useState<number>(2);
 
@@ -74,10 +74,22 @@ const QuestionElement = (props: Props) => {
         }
       }}
     >
-      <EditableArea
-        setState={setQuestion}
-        stateKey="question"
-      />
+      <div className="flex justify-between">
+        <EditableArea
+          setState={setQuestion}
+          stateKey="question"
+        />
+        <Button
+          variant="outline"
+          onClick={() => {
+            props.setQuestion((prev) => {
+              return prev.filter((_, idx) => idx != props.id);
+            });
+          }}
+        >
+          Delete
+        </Button>
+      </div>
       <RadioGroup
         defaultValue="opt1"
         value={question.ans}
@@ -100,21 +112,44 @@ const QuestionElement = (props: Props) => {
           />
         ))}
       </RadioGroup>
-      {optionCounter < 4 && (
+      <div className="flex space-x-10">
+        {optionCounter < 4 && (
+          <Button
+            className="self-center"
+            onClick={() => {
+              setQuestion((prev) => {
+                return { ...prev, [options[optionCounter]]: "" };
+              });
+              setOptionCounter((prev) => {
+                if (prev == 4) {
+                  return 4;
+                }
+                return prev + 1;
+              });
+            }}
+          >
+            add
+          </Button>
+        )}
         <Button
-          className="self-center"
+          variant="outline"
           onClick={() => {
+            setQuestion((prev) => {
+              delete prev[options[optionCounter - 1]];
+              return prev;
+            });
             setOptionCounter((prev) => {
-              if (prev == 4) {
-                return 4;
+              if (prev == 0) {
+                return 0;
               }
-              return prev + 1;
+              return prev - 1;
             });
           }}
+          disabled={optionCounter <= 2}
         >
-          add
+          Delete
         </Button>
-      )}
+      </div>
     </div>
   );
 };

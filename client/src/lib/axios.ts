@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+axios.defaults.withCredentials = true;
+
 export const useAxiosLoading = (url) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,4 +35,5 @@ export const useAxiosLoading = (url) => {
 export const useAxios = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   withCredentials: true,
+  method: ["GET", "POST"],
 });

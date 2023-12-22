@@ -16,6 +16,7 @@ declare global {
 
 const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies["token"];
+  console.log("res cookies=======", req.cookies);
   if (!token) {
     return res.json({
       status: 403,
@@ -29,7 +30,6 @@ const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
       message: "Login To continue",
     });
   }
-
   const user = jwt.decode(token);
 
   req.user = user as UserType;

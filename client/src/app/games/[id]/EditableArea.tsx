@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
+import { QuestionType } from "./QuestionElement";
 
 type Props = {
   htmlFor?: string;
@@ -13,7 +14,7 @@ const EditableArea = (props: Props) => {
   const [text, setText] = useState<string>("");
 
   return (
-    <div>
+    <div className="w-2/5">
       {isEditing || text == ""
         ? (
           <Input
@@ -24,7 +25,7 @@ const EditableArea = (props: Props) => {
             }}
             onBlur={() => {
               setIsEditing(false);
-              props.setState((prev) => {
+              props.setState((prev: QuestionType) => {
                 return {
                   ...prev,
                   [props.stateKey]: text,
@@ -35,28 +36,27 @@ const EditableArea = (props: Props) => {
           />
         )
         : props.htmlFor
-        ? (
-          <Label
-            className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0 cursor-pointer"
-            htmlFor={props.htmlFor}
-            onDoubleClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            {text}
-          </Label>
-        )
-        : (
-          <h2
-            className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 cursor-pointer"
-            htmlFor={props.htmlFor}
-            onDoubleClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            {text}
-          </h2>
-        )}
+          ? (
+            <Label
+              className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0 cursor-pointer"
+              htmlFor={props.htmlFor}
+              onDoubleClick={() => {
+                setIsEditing(true);
+              }}
+            >
+              {text}
+            </Label>
+          )
+          : (
+            <h2
+              className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 cursor-pointer"
+              onDoubleClick={() => {
+                setIsEditing(true);
+              }}
+            >
+              {text}
+            </h2>
+          )}
     </div>
   );
 };

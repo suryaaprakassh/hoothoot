@@ -8,9 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import QuestionElement, { QuestionType } from "./QuestionElement";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
+import { useAxios } from "@/lib/axios";
+import useAuth from "@/components/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
-const page = () => {
+const page = ({ params }: { params: { id: number } }) => {
+  useAuth();
   const [focus, setFocus] = useState<number>(0);
   const [questions, setQuestions] = useState<QuestionType[]>([
     {
@@ -22,6 +27,33 @@ const page = () => {
       opt4: "",
     },
   ]);
+
+  const router = useRouter();
+
+  const submitData = async () => {
+    setFocus(-1);
+    const response = await useAxios.post("/game/add", {
+      questions,
+      gameId: params.id,
+    });
+
+    console.log("response====", response);
+  };
+
+
+  useEffect(() => {
+    const func = async () => {
+      try {
+        await useAxios.post("/game/verify", {
+          id: params.id,
+        });
+      } catch (error: any) {
+        toast.error(error?.message);
+        router.push("/");
+      }
+    };
+    func();
+  }, []);
   return (
     <div className="flex flex-col justify-center">
       <Card className="p-5">
@@ -29,9 +61,7 @@ const page = () => {
         <CardDescription>Edit Your Game Details Here</CardDescription>
         <CardContent className="flex space-x-10 my-4">
           <Button
-            onClick={() => {
-              setFocus(-1);
-            }}
+            onClick={submitData}
           >
             Save
           </Button>
@@ -61,20 +91,11 @@ const page = () => {
                   ans: "",
                   opt1: "",
                   opt2: "",
-                  opt3: "",
-                  opt4: "",
                 }];
               });
             }}
           >
             Add Question
-          </Button>
-          <Button
-            onClick={() => {
-              console.log(questions);
-            }}
-          >
-            test
           </Button>
         </CardFooter>
       </Card>
