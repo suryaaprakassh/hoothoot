@@ -23,8 +23,6 @@ const page = ({ params }: { params: { id: number } }) => {
       ans: "",
       opt1: "",
       opt2: "",
-      opt3: "",
-      opt4: "",
     },
   ]);
 
