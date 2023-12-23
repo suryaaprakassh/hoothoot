@@ -24,6 +24,7 @@ model Game {
   user      Users      @relation(fields: [userId], references: [id])
   userId    Int
   Questions Question[]
+  pin       String     @unique @default("")
 }
 
 model Question {

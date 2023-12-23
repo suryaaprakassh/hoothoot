@@ -4,6 +4,7 @@ import './globals.css'
 import { Toaster } from 'react-hot-toast'
 import ToastProvider from '@/components/providers'
 import UserContextProvider from '@/components/authProviders'
+import { SocketProvider } from '@/components/SocketProviders'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,7 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className + " dark"}>
         <ToastProvider>
-          {children}
+          <SocketProvider>
+            {children}
+          </SocketProvider>
         </ToastProvider>
       </body>
     </html>

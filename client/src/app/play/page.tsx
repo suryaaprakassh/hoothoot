@@ -1,20 +1,41 @@
 "use client"
+import { useSocket } from '@/components/SocketProviders';
+import useAuth from '@/components/hooks/useAuth';
+import { useSearchParams, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react'
-import { io } from "socket.io-client"
+import toast from 'react-hot-toast';
 
-type Props = {}
-
-const PlayComponent = (props: Props) => {
+const GamePlay = () => {
+    useAuth();
+    const router = useRouter();
+    const socket = useSocket();
+    const searchParams = useSearchParams();
+    const [gamePin, setGamePin] = React.useState<string>("");
+    const [playerName, setPlayerName] = React.useState<string>("");
     useEffect(() => {
-        const socket = io("http://localhost:8000");
+        const gamePinParams = searchParams.get("gamePin");
+        const playerNameParams = searchParams.get("playerName");
+        if (!gamePinParams || !playerNameParams) {
+            toast.error("Invalid GameId or PlayerName");
+            router.push("/");
+        }
+        setGamePin(gamePinParams as string);
+        setPlayerName(playerNameParams as string);
+    }, [])
 
+    useEffect(() => {
+        if (!socket) return;
+        socket.connect();
         socket.on("connect", () => {
-            console.log("connected to server")
-        });
-    }, []);
+            socket.emit("join-game", {
+                gamePin,
+                playerName
+            })
+        })
+    }, [socket]);
     return (
-        <div>page</div>
+        <div>GamePlay</div>
     )
 }
 
-export default PlayComponent
+export default GamePlay; 

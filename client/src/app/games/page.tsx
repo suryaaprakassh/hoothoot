@@ -2,26 +2,28 @@
 import useAuth from '@/components/hooks/useAuth';
 import { Button } from '@/components/ui/button'
 import { useAxios } from '@/lib/axios';
+import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast';
 
 type GameDataType = {
     name: string;
-    gameId: number;
+    id: number;
 };
 
 
-const startGame = (gameId: number) => {
-
-};
 
 const GameNameElement = (props: GameDataType) => {
+    const router = useRouter();
+    const startGame = async (gameId: number) => {
+        router.push(`/host/${gameId}`);
+    };
     return (
-        <div className='flex justify-around p-5 my-2' key={props.name + props.gameId}>
+        <div className='flex justify-around p-5 my-2' key={props.name + props.id}>
             <h2 className='text-xl font-bold'>{props.name}</h2>
             <div className='flex space-x-4'>
                 <Button onClick={() => {
-                    startGame(props.gameId);
+                    startGame(props.id);
                 }}>Start</Button>
                 <Button variant="outline">Edit</Button>
             </div>
@@ -36,7 +38,7 @@ const GameMainPage = () => {
         try {
             useAxios.get('/game/getAll').then((response) => {
                 if (response.data.status === "success") {
-                    setGameData(response.data.gameData);
+                    setGameData([...response.data.gameData]);
                 } else {
                     toast.error("Something went wrong");
                 }
@@ -51,7 +53,7 @@ const GameMainPage = () => {
             <h2 className='text-center font-bold text-2xl'>Game Main Page</h2>
             <div>
                 {
-                    gameData.map(game => (<GameNameElement key={game.gameId + game.name} {...game} />))
+                    gameData.map(game => (<GameNameElement key={game.id + game.name} id={game.id} name={game.name} />))
                 }
             </div>
         </div >
@@ -59,9 +61,3 @@ const GameMainPage = () => {
 }
 
 export default GameMainPage;
-
-/*
-should move to a new page
-get a socket connection
-get the list of all palayers joined
-*/

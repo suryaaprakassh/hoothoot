@@ -12,13 +12,15 @@ import { useAxios } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { use, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function Home() {
   const router = useRouter();
   const loading = useAuth();
   const [gameName, setGameName] = useState<string>("");
+  const [gamePin, setGamePin] = useState<string>("");
+  const [playerName, setPlayerName] = useState<string>("");
 
   const createGame = async () => {
     if (gameName == "" || !gameName) {
@@ -55,9 +57,15 @@ export default function Home() {
                     <CardDescription>If you have a code</CardDescription>
                   </CardHeader>
                   <CardContent className="flex justify-between flex-col space-y-10 items-center">
-                    <Input type="text" placeholder="game-pin" />
-                    <Button>Join</Button>
-                  </CardContent>
+                    <Input type="text" placeholder="game-pin" onChange={e => {
+                      setGamePin(e.target.value);
+                    }} value={gamePin} />
+                    <Input type="text" placeholder="Your Game Name.." onChange={e => {
+                      setPlayerName(e.target.value);
+                    }} value={playerName} />
+                    <Button onClick={() => {
+                      router.push(`/play?gamePin=${gamePin}&playerName=${playerName}`);
+                    }}>Join</Button> </CardContent>
                 </Card>
               </TabsContent>
               <TabsContent value="create">

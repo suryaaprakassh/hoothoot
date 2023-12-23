@@ -21,6 +21,10 @@ router.get("/getAll", async (req, res) => {
   }
 
   const games = await prisma.game.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
     where: {
       userId: user?.id,
     },
@@ -106,4 +110,32 @@ router.post("/add", async (req: Request, res: Response) => {
     data: "Ok",
     queryCount: dbQuestions,
   });
+});
+
+router.post("/getGamePin", async (req, res) => {
+  const gameId = parseInt(req.body.gameId);
+  const game = await prisma.game.findUnique({
+    where: {
+      id: gameId,
+    },
+  });
+  if (!game) {
+    return res.status(500).json({ status: "error", message: "Game not found" });
+  }
+
+  if (game.pin !== "") {
+    return res.status(200).json({ status: "success", gamePin: game.pin });
+  }
+  const newPin = Math.floor(Math.random() * 1000000);
+
+  await prisma.game.update({
+    where: {
+      id: gameId,
+    },
+    data: {
+      pin: newPin.toString(),
+    },
+  });
+
+  return res.status(200).json({ status: "success", gamePin: newPin });
 });
