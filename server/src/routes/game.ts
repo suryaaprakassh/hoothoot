@@ -3,11 +3,33 @@ import { Request, Response } from "express";
 import prisma from "../lib/db";
 import AuthMiddleware from "../middlewares/AuthMiddleware";
 import { questionSchemaArray } from "../schemas/schema";
-import type { Question } from "@prisma/client";
-import { request } from "http";
 export const router = express.Router();
 
-router.post("/create", AuthMiddleware, async (req, res) => {
+router.use(AuthMiddleware);
+
+router.get("/getAll", async (req, res) => {
+  const reqBody = req.body;
+
+  const user = await prisma.users.findUnique({
+    where: {
+      email: req.user?.email,
+    },
+  });
+
+  if (!user) {
+    return res.status(500).json({ message: "User Not Found" });
+  }
+
+  const games = await prisma.game.findMany({
+    where: {
+      userId: user?.id,
+    },
+  });
+
+  return res.status(200).json({ status: "success", gameData: games });
+});
+
+router.post("/create", async (req, res) => {
   const body = req.body;
   if (!body.gameName || body.gameName == "") {
     return res.json({
@@ -71,16 +93,14 @@ router.post("/add", async (req: Request, res: Response) => {
   const questions = questionsData.data;
   const gameId = parseInt(req.body.gameId);
 
-  const dbQuestions = await prisma.question.createMany(
-    {
-      data: questions.map((q) => {
-        return {
-          ...q,
-          gameId: gameId,
-        };
-      }),
-    },
-  );
+  const dbQuestions = await prisma.question.createMany({
+    data: questions.map((q) => {
+      return {
+        ...q,
+        gameId: gameId,
+      };
+    }),
+  });
 
   return res.json({
     data: "Ok",

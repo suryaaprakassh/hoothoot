@@ -44,8 +44,6 @@ router.post("/signup", async (req, res) => {
     },
   });
 
-  console.log("new user======", newUser);
-
   return res.status(201).json({
     message: "User created successfully",
     success: true,
@@ -84,11 +82,12 @@ router.post("/login", async (req, res) => {
     {
       email: user.email,
       name: user.name,
+      id: user.id,
     },
     process.env.JWT_SECRET!,
     {
       expiresIn: "1d",
-    },
+    }
   );
   return res
     .status(200)
@@ -105,7 +104,6 @@ router.post("/login", async (req, res) => {
 });
 router.post("/verify", async (req, res) => {
   const token = req.cookies["token"];
-  console.log("token======", req.cookies);
   if (!token || token == undefined) {
     return res.status(403).clearCookie("token").json({
       message: "Invalid Token",
