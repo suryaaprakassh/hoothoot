@@ -14,7 +14,8 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         const newSocket = io('http://localhost:8000', {
-            autoConnect: false
+            autoConnect: false,
+            withCredentials: true,
         });
 
         setSocket(newSocket);

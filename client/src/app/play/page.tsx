@@ -21,18 +21,23 @@ const GamePlay = () => {
         }
         setGamePin(gamePinParams as string);
         setPlayerName(playerNameParams as string);
-    }, [])
-
-    useEffect(() => {
         if (!socket) return;
         socket.connect();
         socket.on("connect", () => {
             socket.emit("join-game", {
-                gamePin,
-                playerName
+                gamePin: gamePinParams,
+                playerName: playerNameParams
+            });
+            socket.on("invalid-pin", () => {
+                toast.error("Invalid GameId");
             })
         })
-    }, [socket]);
+        return () => {
+            socket.off();
+            socket.disconnect();
+        }
+    }, [])
+
     return (
         <div>GamePlay</div>
     )

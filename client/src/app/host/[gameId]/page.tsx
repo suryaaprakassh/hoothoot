@@ -9,8 +9,12 @@ type Props = {
         gameId: string;
     }
 }
+type PlayerType = {
+    id: string;
+    name: string;
+};
 const HostGameComponent = (props: Props) => {
-    const [players, setPlayers] = React.useState<string[]>([]);
+    const [players, setPlayers] = React.useState<PlayerType[]>([]);
     const [gamePin, setGamePin] = React.useState<string>("");
     const socket = useSocket();
     useEffect(() => {
@@ -53,8 +57,8 @@ const HostGameComponent = (props: Props) => {
             setPlayers([...players, playerName]);
         })
 
-        socket.on("player-disconnected", ({ playerName }) => {
-            setPlayers(players.filter(player => player !== playerName));
+        socket.on("player-disconnected", (id) => {
+            setPlayers(players.filter(player => player.id !== id));
         });
 
         return (() => {
@@ -71,7 +75,7 @@ const HostGameComponent = (props: Props) => {
             <h2>Game Pin: {gamePin}</h2>
             <div>
                 {
-                    players.map((player, index) => (<p>{index + 1}. {player}</p>))
+                    players.map((player, index) => (<p>{index + 1}. {player.name}</p>))
                 }
             </div>
         </div>
